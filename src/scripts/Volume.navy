@@ -53,9 +53,8 @@ yRange(data, hi, lo) {
 
 // Legend, defined as pairs [value, color]
 legend(x) {
-    let v = $core.cursor.getValue($core.paneId, $core.id)
     let sym = $props.currencySymbol
-    let color = v[2] > 0 ?
+    let color = x[2] > 0 ?
         $props.colorVolUp : $props.colorVolDw
     let fc = $lib.formatCash
     return [[sym + fc(x[1]), color.slice(0, 7)]]
