@@ -101,4 +101,4 @@ drawBody(ctx, item) {
 }
 
 // Legend, defined as pairs [value, color]
-legend(x) => [[x[1].text, x[1].color || $props.color]]
+legend(x) => [[x[$props.dataIndex], $props.color]]
