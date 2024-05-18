@@ -212,6 +212,10 @@ export default {
                         "link": "/guide/built-in-overlays/PriceLabels"
                     },
                     {
+                        "text": "TextLabels",
+                        "link": "/guide/built-in-overlays/TextLabels"
+                    },
+                    {
                         "text": "Range",
                         "link": "/guide/built-in-overlays/Range"
                     },
