@@ -10,6 +10,7 @@
 //   ?back :: color, background
 //   ?stroke :: stroke color
 //   ?offset, px, offest from the price value
+//   ?body :: draw body around text or not
 // }
 
 [OVERLAY name=TextLabels, ctx=Canvas, verion=1.0.0]
@@ -20,7 +21,7 @@ prop('back', { type: 'Color', def: $core.colors.back })
 prop('stroke', { type: 'Color', def: $core.colors.scale })
 prop('borderRadius', { type: 'number', def: 3 })
 prop('offset', { type: 'number', def: 5 })
-
+prop('body', { type: 'number', def: 1 })
 
 // Draw call
 draw(ctx) {
@@ -42,7 +43,7 @@ draw(ctx) {
         ctx.strokeStyle = item.s || $props.stroke
         ctx.fillStyle = item.b || $props.back
         ctx.beginPath()
-        drawBody(ctx, item)
+        if ($props.body) drawBody(ctx, item)
         ctx.stroke()
         ctx.fill()
         ctx.fillStyle = item.c || $props.color
