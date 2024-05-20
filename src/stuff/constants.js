@@ -72,7 +72,7 @@ const ChartConfig = {
     GRIDY: 47,       // Grid y-step target, px
     BOTBAR: 28,      // Bottom bar height, px
     PANHEIGHT: 22,   // Scale panel height, px
-    DEFAULT_LEN: 50, // Starting range, candles
+    DEFAULT_LEN: 250, // Starting range, candles
     MINIMUM_LEN: 5,  // Minimal starting range, candles
     MIN_ZOOM: 5,     // Minimal zoom, candles
     MAX_ZOOM: 5000,  // Maximal zoom, candles,
