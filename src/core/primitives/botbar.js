@@ -123,7 +123,7 @@ function formatCursorX(props) {
         var mo = MONTHMAP[d.getUTCMonth()]
         var dd = '01'
     }
-    if (tf <= WEEK) dd = d.getUTCDate()
+    if (tf <= WEEK) dd = d.getDate() // Bugfix: get correct day from given stamp.
     let date = `${dd} ${mo} ${yr}`
     let time = ''
 
