@@ -86,9 +86,6 @@ function formatDate(props, p) {
 
     //t += new Date(t).getTimezoneOffset() * MINUTE
     let d = new Date(tZ)
-    console.log("****")
-    console.log(d.getDate())
-    console.log("****")
 
     if (p[2] === YEAR || Utils.yearStart(t) === t) {
         return d.getUTCFullYear()
@@ -126,7 +123,7 @@ function formatCursorX(props) {
         var mo = MONTHMAP[d.getUTCMonth()]
         var dd = '01'
     }
-    if (tf <= WEEK) dd = d.getUTCDate()
+    if (tf <= WEEK) dd = d.getDate() // Bugfix: get correct day from given stamp. 
     let date = `${dd} ${mo} ${yr}`
     let time = ''
 
