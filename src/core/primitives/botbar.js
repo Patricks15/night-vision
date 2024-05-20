@@ -29,9 +29,7 @@ function body(props, layout, ctx) {
 
     ctx.fillStyle = props.colors.text
     ctx.beginPath()
-    console.log("****")
-    console.log(layout.botbar.xs)
-    console.log("****")
+
     for (var p of layout.botbar.xs) {
 
         let lbl = formatDate(props, p)
@@ -88,6 +86,9 @@ function formatDate(props, p) {
 
     //t += new Date(t).getTimezoneOffset() * MINUTE
     let d = new Date(tZ)
+    console.log("****")
+    console.log(d.getDate())
+    console.log("****")
 
     if (p[2] === YEAR || Utils.yearStart(t) === t) {
         return d.getUTCFullYear()
