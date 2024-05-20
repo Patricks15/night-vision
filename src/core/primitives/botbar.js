@@ -29,7 +29,9 @@ function body(props, layout, ctx) {
 
     ctx.fillStyle = props.colors.text
     ctx.beginPath()
-
+    console.log("****")
+    console.log(layout.botbar.xs)
+    console.log("****")
     for (var p of layout.botbar.xs) {
 
         let lbl = formatDate(props, p)
