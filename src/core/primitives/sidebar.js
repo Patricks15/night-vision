@@ -97,7 +97,7 @@ function panel(props, layout, scale, side, ctx) {
 
 function tracker(props, layout, scale, side, ctx, tracker) {
     const panHeight = Math.floor(props.config.PANHEIGHT * 0.8)
-    const ct = props.config.CANDLE_TIME && props.timeFrame >= Const.MINUTE
+    const ct = false; //Note: uncomment because of not used // props.config.CANDLE_TIME && props.timeFrame >= Const.MINUTE
     let $ = tracker.value
     let lbl = $.toFixed(scale.prec)
     ctx.fillStyle = tracker.color
