@@ -10,7 +10,7 @@
 prop('color', { type: 'color', def: '#31ce31' })
 prop('lineWidth', { type: 'number', def: 1 })
 prop('dataIndex', { type: 'integer', def: 1 })
-prop('showLabel', {  type: 'boolean', def: true })
+prop('showLabel', {  type: 'boolean', def: false })
 
 
 draw(ctx) {
