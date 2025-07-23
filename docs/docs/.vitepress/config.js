@@ -224,6 +224,10 @@ export default {
                         "link": "/guide/built-in-overlays/RangeTool"
                     },
                     {
+                        "text": "BoxTool",
+                        "link": "/guide/built-in-overlays/BoxTool"
+                    },
+                    {
                         "text": "Sparse",
                         "link": "/guide/built-in-overlays/Sparse"
                     },

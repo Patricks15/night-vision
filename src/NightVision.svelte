@@ -16,10 +16,10 @@ export let showLogo = false
 export let id = 'nvjs'
 
 // Width of the chart
-export let width = 750
+export let width = 1200 //750
 
 // Height of the chart
-export let height = 420
+export let height = 800 //420
 
 // Colors (modify specific colors)
 export let colors = {} // TODO: default colors

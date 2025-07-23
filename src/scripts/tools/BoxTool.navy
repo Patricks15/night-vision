@@ -1,0 +1,76 @@
+// Navy ~ 0.2-lite
+// <ds>Draw bounding box tool [Shift+Click]</ds>
+
+[OVERLAY name=BoxTool, ctx=Canvas, verion=1.0.1, author=GPT4]
+
+let pin1 = null
+let pin2 = null
+let pressed = false
+let state = 'idle'
+
+draw(ctx) {
+    const layout = $core.layout
+
+    if (pin1 && pin2) {
+        const x1 = layout.time2x(pin1.t) // time to x coordinate
+        const x2 = layout.time2x(pin2.t) // time to x coordinate
+        const y1 = layout.value2y(pin1.v) // value to y coordinate
+        const y2 = layout.value2y(pin2.v) // value to y coordinate
+
+         // draw bounding box area
+        let color = '#3355ff';
+        ctx.fillStyle = color + '33';
+        ctx.fillRect(x1, y1, x2 - x1, y2 - y1)
+
+        // draw frame around bounding box
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2; // optional: Dicke des Rahmens
+        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+    }
+}
+
+keydown(event) {
+    if (event.key === 'b') {
+        pressed = true
+    }
+}
+
+keyup(event) {
+    if (event.key === 'b') {
+        pressed = false
+    }
+}
+
+mousedown(event) {
+    const layout = $core.layout
+    if (state === 'idle' && pressed) {
+        // Create the first pin
+        pin1 = {
+            t: $core.cursor.time,
+            v: layout.y2value(event.layerY)
+        }
+        pin2 = { ...pin1 }
+        state = 'drawing'
+    } else if (state === 'drawing') {
+        state = 'finished'
+    } else if (state === 'finished') {
+        state = 'idle'
+        pin1 = null
+        pin2 = null
+    }
+    $events.emitSpec('chart', 'update-layout')
+}
+
+mousemove(event) {
+    if (state === 'drawing') {
+        const layout = $core.layout
+        // Create the second pin
+        pin2 = {
+            t: $core.cursor.time,
+            v: layout.y2value(event.layerY)
+        }
+    }
+}
+
+// Disable legend by returning null
+legend() => null
