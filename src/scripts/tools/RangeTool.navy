@@ -128,18 +128,25 @@ timeText() {
 }
 
 
+document.getElementById('idBtnToolRange').addEventListener('click', () => {
+    shift = true
+});
 
-keydown(event) {
-    if (event.key === 'Shift') {
-        shift = true
-    }
-}
+document.getElementById('idBtnToolCursor').addEventListener('click', () => {
+    shift = false
+});
 
-keyup(event) {
-    if (event.key === 'Shift') {
-        shift = false
-    }
-}
+// keydown(event) {
+//     if (event.key === 'Shift') {
+//         shift = true
+//     }
+// }
+
+// keyup(event) {
+//     if (event.key === 'Shift') {
+//         shift = false
+//     }
+// }
 
 mousedown(event) {
     const layout = $core.layout

@@ -108,9 +108,7 @@ onMount(() => {
     //  Type in the console: stack.execAll()
     //  or: stack.exec('<group>')
 
-    console.log("*****")
-    console.log(chart)
-    console.log("*****")
+    // activate range tool script
     for (var p = 0; p < 2; p++) {
         chart.data.panes[p].overlays.push({
             name: 'RangeTool',
@@ -124,22 +122,42 @@ onMount(() => {
     }
     chart.update()
 
-    console.log("*****")
+    // activate boundingbox box tool script
+    for (var p = 0; p < 2; p++) {
+        chart.data.panes[p].overlays.push({
+            name: 'BoxTool',
+            type: 'BoxTool',
+            data: [],
+            dataExt: {
+                lines: [{}]
+            }, // Here we place non-timeseries data
+            props: {},
+            settings: {
+                zIndex: 1
+            }
+        })
+    }
+    chart.update()
+
+    for (var p = 0; p < 2; p++) {
+        chart.data.panes[p].overlays.push({
+            name: 'LineTool',
+            type: 'LineTool',
+            data: [],
+            dataExt: {
+                lines: [{}]
+            }, // Here we place non-timeseries data
+            props: {},
+            settings: {
+                zIndex: 1
+            }
+        })
+    }
+    chart.update()
+
+
 
 })
-
-
-function addLineTool() {
-    console.log("Linie wurde hinzugefügt");
-}
-
-function addMessureTool() {
-    console.log("Text wurde hinzugefügt");
-}
-
-function addBox() {
-    console.log("Box wurde hinzugefügt");
-}
 
 </script>
 <style>
@@ -173,7 +191,7 @@ function addBox() {
     margin-bottom: 20px;
 }
 
-.RowToolbar button {
+.btnTool {
     width: 35px;
     height: 35px;
     background-color: transparent;
@@ -188,14 +206,27 @@ function addBox() {
     transition: background-color 0.2s ease;
 }
 
-.RowToolbar button:hover {
+.btnTool:hover {
     border-color: #0083cf;
+}
+
+.btnTool.active {
+    background-color: #6ab2ff56;
 }
 
 .RowToolbar svg {
     width: 16px;
     height: 16px;
     fill: #adadad;
+}
+
+.crosshair-icon line {
+  stroke: #adadad;
+  stroke-width: 4;
+}
+
+.RowToolbar button:hover line {
+    stroke: #0083cf;
 }
 
 .RowToolbar button:hover svg {
@@ -207,17 +238,23 @@ function addBox() {
 <div class="app">
     <div class="toolbar">
         <div class="RowToolbar">
-            <button on:click={addLineTool}>
+            <button class="btnTool" id="idBtnToolCursor">
+                <svg class="crosshair-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="20" height="20">
+                    <line x1="50" y1="0" x2="50" y2="100"/>
+                    <line x1="0" y1="50" x2="100" y2="50"/>
+                </svg>
+            </button>
+            <button class="btnTool" id="idBtnToolLine">   <!-- on:click={addLineTool} -->
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
                     <path d="M190.4 74.1c5.6-16.8-3.5-34.9-20.2-40.5s-34.9 3.5-40.5 20.2l-128 384c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l128-384zm70.9-41.7c-17.4-2.9-33.9 8.9-36.8 26.3l-64 384c-2.9 17.4 8.9 33.9 26.3 36.8s33.9-8.9 36.8-26.3l64-384c2.9-17.4-8.9-33.9-26.3-36.8zM352 32c-17.7 0-32 14.3-32 32l0 384c0 17.7 14.3 32 32 32s32-14.3 32-32l0-384c0-17.7-14.3-32-32-32z"/>
                 </svg>
             </button>
-            <button on:click={addMessureTool}>
+            <button class="btnTool" id="idBtnToolRange">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
                     <path d="M177.9 494.1c-18.7 18.7-49.1 18.7-67.9 0L17.9 401.9c-18.7-18.7-18.7-49.1 0-67.9l50.7-50.7 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 41.4-41.4 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 41.4-41.4 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 41.4-41.4 48 48c6.2 6.2 16.4 6.2 22.6 0s6.2-16.4 0-22.6l-48-48 50.7-50.7c18.7-18.7 49.1-18.7 67.9 0l92.1 92.1c18.7 18.7 18.7 49.1 0 67.9L177.9 494.1z"/>
                 </svg>
             </button>
-            <button on:click={addBox}>
+            <button class="btnTool" id="idBtnToolBox">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
                     <path d="M384 80c8.8 0 16 7.2 16 16l0 320c0 8.8-7.2 16-16 16L64 432c-8.8 0-16-7.2-16-16L48 96c0-8.8 7.2-16 16-16l320 0zM64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32z"/>
                 </svg>

@@ -29,17 +29,26 @@ draw(ctx) {
     }
 }
 
-keydown(event) {
-    if (event.key === 'b') {
-        pressed = true
-    }
-}
+document.getElementById('idBtnToolBox').addEventListener('click', () => {
+    pressed = true
+});
 
-keyup(event) {
-    if (event.key === 'b') {
-        pressed = false
-    }
-}
+document.getElementById('idBtnToolCursor').addEventListener('click', () => {
+    pressed = false
+});
+
+// keydown(event) {
+//     if (event.key === 'b') {
+//         pressed = true
+//     }
+// }
+
+// keyup(event) {
+//     if (event.key === 'b') {
+//         pressed = false
+//     }
+// }
+
 
 mousedown(event) {
     const layout = $core.layout

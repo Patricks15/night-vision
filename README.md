@@ -10,7 +10,7 @@
 
 # <center> Night Vision Charts™ </center>
 
-**NightVision** is a highly customizable charting library, created for professional traders. It is a continuation of [TradingVueJS](https://github.com/tvjsx/trading-vue-js) project, borrowing its core ideas, but applying better design decisions and improving performance. Built with Svelte.   
+**NightVision** is a highly customizable charting library, created for professional traders. It is a continuation of [TradingVueJS](https://github.com/tvjsx/trading-vue-js) project, borrowing its core ideas, but applying better design decisions and improving performance. Built with Svelte.
 
 Start your charting journey with our interactive [**[DOCS]**](https://nightvision.dev/guide/intro/night-vision-charts.html).
 
@@ -53,6 +53,47 @@ chart.data = {
 }
 ```
 
+## Usage of Tools
+- Switch to cursor tool to disable drawing: "idBtnToolCursor"
+- Active messurement: "idBtnToolRange"
+    ```js
+    // activate range tool script
+    for (var p = 0; p < 2; p++) {
+        chart.data.panes[p].overlays.push({
+            name: 'RangeTool',
+            type: 'RangeTool',
+            data: [],
+            props: {},
+            settings: {
+                zIndex: 1000
+            }
+        })
+    }
+    chart.update()
+    ```
+
+- Active drawing box: "idBtnToolBox"
+    ```js
+    // activate boundingbox box tool script
+    for (var p = 0; p < 2; p++) {
+        chart.data.panes[p].overlays.push({
+            name: 'BoxTool',
+            type: 'BoxTool',
+            data: [],
+            dataExt: {
+                lines: [{}]
+            }, // Here we place non-timeseries data
+            props: {},
+            settings: {
+                zIndex: 1
+            }
+        })
+    }
+    chart.update()
+    ```
+
+
+
 ## Roadmap
 
 - ~~Add stocks support (Index-Based mode)~~
@@ -64,7 +105,7 @@ chart.data = {
 - NavyJS tutorial
 - Data API (the high-level API)
 - *Add tool overlays* ???
-- *Toolbar* ??? 
+- external Toolbar
 - Mobile support
 
 
