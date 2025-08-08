@@ -13,8 +13,8 @@ draw(ctx) {
     const layout = $core.layout
 
     if (pin1 && pin2) {
-        const x1 = layout.time2x(pin1.t) // time to x coordinate
-        const x2 = layout.time2x(pin2.t) // time to x coordinate
+        const x1 = layout.ti2x(pin1.t, pin1.i) // time/index to x coordinate
+        const x2 = layout.ti2x(pin2.t, pin2.i) // time/index to x coordinate
         const y1 = layout.value2y(pin1.v) // value to y coordinate
         const y2 = layout.value2y(pin2.v) // value to y coordinate
 
@@ -154,6 +154,7 @@ mousedown(event) {
         // Create the first pin
         pin1 = {
             t: $core.cursor.time,
+            i: $core.cursor.ti,
             v: layout.y2value(event.layerY)
         }
         pin2 = { ...pin1 }
@@ -174,6 +175,7 @@ mousemove(event) {
         // Create the second pin
         pin2 = {
             t: $core.cursor.time,
+            i: $core.cursor.ti,
             v: layout.y2value(event.layerY)
         }
     }

@@ -51,7 +51,7 @@ TODO: data-api interface:
 let stack = new TestStack()
 let chart = null
 
-//data.indexBased = true
+data.indexBased = true
 
 onMount(() => {
     chart = new NightVision('chart-container', {
@@ -139,22 +139,21 @@ onMount(() => {
     }
     chart.update()
 
-    for (var p = 0; p < 2; p++) {
-        chart.data.panes[p].overlays.push({
-            name: 'LineTool',
-            type: 'LineTool',
-            data: [],
-            dataExt: {
-                lines: [{}]
-            }, // Here we place non-timeseries data
-            props: {},
-            settings: {
-                zIndex: 1
-            }
-        })
-    }
-    chart.update()
-
+    // for (var p = 0; p < 2; p++) {
+    //     chart.data.panes[p].overlays.push({
+    //         name: 'LineTool',
+    //         type: 'LineTool',
+    //         data: [],
+    //         dataExt: {
+    //             lines: [{}]
+    //         }, // Here we place non-timeseries data
+    //         props: {},
+    //         settings: {
+    //             zIndex: 1
+    //         }
+    //     })
+    // }
+    // chart.update()
 
 
 })

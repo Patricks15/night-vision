@@ -92,6 +92,11 @@ chart.data = {
     chart.update()
     ```
 
+## Build Package
+```bash
+    npm run build-cdn
+```
+find the build package under: ./night-vision/dist/cdn
 
 
 ## Roadmap
