@@ -56,11 +56,15 @@ data.indexBased = true
 onMount(() => {
     chart = new NightVision('chart-container', {
         data: data,
+        colors: { back: 'black' },
         //autoResize: true,
         //indexBased: true
     })
     //chart.data = data2
     window.chart = chart
+
+
+
     window.stack = stack
 
     stack.setGroup('data-sync')
@@ -158,11 +162,36 @@ onMount(() => {
 
 })
 
+let isDark = false;
+function toggleTheme() {
+    chart.destroy()
+
+    isDark = !isDark;
+    let backgroundColor = "#ffffff";
+    if (isDark){
+        backgroundColor = "#000023";
+    }
+
+    chart = new NightVision('chart-container', {
+        data: data,
+        colors: { back: backgroundColor },
+        //autoResize: true,
+        //indexBased: true
+    })
+}
+
 </script>
+
 <style>
 
 .app {
     display: flex;
+    height: 100%;
+}
+
+.chart-wrapper {
+    position: relative; /* Referenz für den Button */
+    width: 100%;
     height: 100%;
 }
 
@@ -232,9 +261,23 @@ onMount(() => {
     fill: #0083cf;
 }
 
+.theme-toggle-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10; /* sicherstellen, dass Button über Chart liegt */
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #eee;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
 </style>
 
 <div class="app">
+
     <div class="toolbar">
         <div class="RowToolbar">
             <button class="btnTool" id="idBtnToolCursor">
@@ -260,5 +303,13 @@ onMount(() => {
             </button>
         </div>
     </div>
-    <div id="chart-container"></div>
+
+    <!-- Chart + Button Wrapper -->
+    <div class="chart-wrapper">
+        <button class="theme-toggle-btn" on:click={toggleTheme}>
+            {isDark ? "🌙 Dark" : "☀️ Light"}
+        </button>
+        <div id="chart-container"></div>
+    </div>
+
 </div>

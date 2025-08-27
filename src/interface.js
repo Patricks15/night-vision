@@ -142,15 +142,25 @@ class NightVision {
     // *** Internal variables ***
 
     get layout() {
-        let chart = this.comp.getChart()
-        if (!chart) return null
-        return chart.getLayout()
+        // check if function is available
+        if (this.comp && typeof this.comp.getChart === "function") {
+            let chart = this.comp.getChart()
+            if (!chart) return null
+            return chart.getLayout()
+        } else {
+            return null;
+        }
     }
 
     get range() {
-        let chart = this.comp.getChart()
-        if (!chart) return null
-        return chart.getRange()
+        // check if function is available
+        if (this.comp && typeof this.comp.getChart === "function") {
+            let chart = this.comp.getChart()
+            if (!chart) return null
+            return chart.getRange()
+        } else {
+            return null
+        }
     }
 
     set range(val) {
@@ -241,7 +251,7 @@ class NightVision {
     destroy() {
         this.comp.$destroy()
         this.ww.stop()
-    } 
+    }
 }
 
 export {
