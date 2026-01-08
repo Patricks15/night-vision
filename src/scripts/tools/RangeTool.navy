@@ -132,8 +132,14 @@ document.getElementById('idBtnToolRange').addEventListener('click', () => {
     shift = true
 });
 
-document.getElementById('idBtnToolCursor').addEventListener('click', () => {
-    shift = false
+// disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange"]
+function disableShift() {
+    shift = false;
+}
+
+disableBtns = ["idBtnToolCursor", "idBtnToolBox"]
+disableBtns.forEach(id => {
+    document.getElementById(id)?.addEventListener('click', disableShift);
 });
 
 // keydown(event) {
