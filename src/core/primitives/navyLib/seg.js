@@ -13,12 +13,10 @@ export default class Segment {
 
     // Update line coordinates
     update(p1, p2) {
-
         const layout = this.core.layout
-
-        this.x1 = layout.time2x(p1[0])
+        this.x1 = layout.ti2x(p1[0], p1[0]) // time , index
         this.y1 = layout.value2y(p1[1])
-        this.x2 = layout.time2x(p2[0])
+        this.x2 = layout.ti2x(p2[0], p2[0])
         this.y2 = layout.value2y(p2[1])
     }
 
@@ -32,8 +30,8 @@ export default class Segment {
     // Collision function. x, y - mouse coord.
     collision(x, y) {
         return Math2.point2seg(
-            [x, y], 
-            [this.x1, this.y1], 
+            [x, y],
+            [this.x1, this.y1],
             [this.x2, this.y2]
         ) < this.T
     }

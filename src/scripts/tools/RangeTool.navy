@@ -8,7 +8,6 @@ let pin2 = null
 let shift = false
 let state = 'idle'
 
-// TODO: fix for index-based
 draw(ctx) {
     const layout = $core.layout
 
@@ -132,12 +131,12 @@ document.getElementById('idBtnToolRange').addEventListener('click', () => {
     shift = true
 });
 
-// disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange"]
+// disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange", "idBtnToolLine"]
 function disableShift() {
     shift = false;
 }
 
-disableBtns = ["idBtnToolCursor", "idBtnToolBox"]
+disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolLine"]
 disableBtns.forEach(id => {
     document.getElementById(id)?.addEventListener('click', disableShift);
 });

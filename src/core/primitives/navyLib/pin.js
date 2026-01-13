@@ -1,10 +1,10 @@
-// Interactive pin 
+// Interactive pin
 
 export default class Pin {
 
     constructor(core, line, name, params = {}) {
 
-        this.RADIUS = core.props.config.PIN_RADIUS 
+        this.RADIUS = core.props.config.PIN_RADIUS
         this.RADIUS_SQ = Math.pow(this.RADIUS + 7, 2)
 
         if (core.lib.Utils.isMobile) {
@@ -76,12 +76,13 @@ export default class Pin {
 
         this.x = this.core.cursor.x
         this.y = this.core.cursor.y
+        let i = this.core.cursor.ti
         this.t = this.core.cursor.time
         this.y$ = y$
 
         // Save current position in dataExt
+        //this.data[this.name] = [i, this.y$]
         this.data[this.name] = [this.t, this.y$]
-
     }
 
     mousemove(event) {
@@ -112,7 +113,7 @@ export default class Pin {
                     this.state = 'dragging'
                     this.moved = false
                     this.core.events.emit('scroll-lock', true)
-                    //TODO: this.core.events.emit('object-selected') 
+                    //TODO: this.core.events.emit('object-selected')
                 }
                 break
         }

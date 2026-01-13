@@ -149,7 +149,14 @@ onMount(() => {
     //         type: 'LineTool',
     //         data: [],
     //         dataExt: {
-    //             lines: [{}]
+    //             lines: [
+    //                     {
+    //                         type: 'segment',
+    //                         p1: [4116, 4.84],
+    //                         p2: [4163, 4.54],
+    //                         uuid: '123'
+    //                     }
+    //                 ]
     //         }, // Here we place non-timeseries data
     //         props: {},
     //         settings: {
@@ -287,9 +294,39 @@ function toggleTheme() {
                 </svg>
             </button>
             <button class="btnTool" id="idBtnToolLine">   <!-- on:click={addLineTool} -->
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512">
-                    <path d="M190.4 74.1c5.6-16.8-3.5-34.9-20.2-40.5s-34.9 3.5-40.5 20.2l-128 384c-5.6 16.8 3.5 34.9 20.2 40.5s34.9-3.5 40.5-20.2l128-384zm70.9-41.7c-17.4-2.9-33.9 8.9-36.8 26.3l-64 384c-2.9 17.4 8.9 33.9 26.3 36.8s33.9-8.9 36.8-26.3l64-384c2.9-17.4-8.9-33.9-26.3-36.8zM352 32c-17.7 0-32 14.3-32 32l0 384c0 17.7 14.3 32 32 32s32-14.3 32-32l0-384c0-17.7-14.3-32-32-32z"/>
-                </svg>
+                <svg
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <!-- Linie (länger & deutlicher) -->
+                <path
+                  d="M3 21 L21 3"
+                  stroke="white"
+                  stroke-width="3.5"
+                  stroke-linecap="round"
+                />
+
+                <!-- Punkt links unten (größer) -->
+                <path
+                  d="M3 21
+                     m -3.5,0
+                     a 3.5,3.5 0 1,0 7,0
+                     a 3.5,3.5 0 1,0 -7,0"
+                />
+
+                <!-- Punkt rechts oben (größer) -->
+                <path
+                  d="M21 3
+                     m -3.5,0
+                     a 3.5,3.5 0 1,0 7,0
+                     a 3.5,3.5 0 1,0 -7,0"
+                />
+              </svg>
+
+
             </button>
             <button class="btnTool" id="idBtnToolRange">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">

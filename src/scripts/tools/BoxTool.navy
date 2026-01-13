@@ -38,7 +38,7 @@ function disableShift() {
     pressed = false;
 }
 
-disableBtns = ["idBtnToolCursor", "idBtnToolRange"]
+disableBtns = ["idBtnToolCursor", "idBtnToolRange"]  // "idBtnToolLine"
 disableBtns.forEach(id => {
     document.getElementById(id)?.addEventListener('click', disableShift);
 });
