@@ -1,0 +1,127 @@
+// Navy ~ 0.2-lite
+// <ds>Draw Fibonacci tool [Shift+Click]</ds>
+
+[OVERLAY name=FiboTool, ctx=Canvas, verion=1.0.1, author=GPT4]
+
+let pin1 = null
+let pin2 = null
+let pressed = false
+let state = 'idle'
+
+// Fibonacci Levels
+const levels = [0.236, 0.382, 0.5, 0.618]
+
+draw(ctx) {
+    const layout = $core.layout
+
+    if (pin1 && pin2) {
+        const x1 = layout.ti2x(pin1.t, pin1.i)
+        const x2 = layout.ti2x(pin2.t, pin2.i)
+
+        const y1 = layout.value2y(pin1.v) // 100%
+        const y2 = layout.value2y(pin2.v) // 0%
+
+        let color = '#ff9933'
+
+        // === Base line (100% -> 0%) ===
+        ctx.strokeStyle = color
+        ctx.lineWidth = 2
+        ctx.beginPath()
+        ctx.moveTo(x1, y1)
+        ctx.lineTo(x2, y2)
+        ctx.stroke()
+
+        // === Draw Fibonacci Levels ===
+        levels.forEach(level => {
+            // Interpolation zwischen pin1 (100%) und pin2 (0%)
+            const value = pin1.v + (pin2.v - pin1.v) * (1 - level)
+
+            const y = layout.value2y(value)
+
+            ctx.strokeStyle = color + 'aa'
+            ctx.lineWidth = 1
+
+            ctx.beginPath()
+            ctx.moveTo(x1, y)
+            ctx.lineTo(x2, y)
+            ctx.stroke()
+
+            // Label
+            ctx.fillStyle = color
+            ctx.font = '12px Arial'
+            ctx.fillText((level * 100).toFixed(1) + '%', x2 + 5, y + 4)
+        })
+
+        // === Draw 100% + 0% Linien ===
+        const baseLevels = [
+            { val: pin1.v, label: '100%' },
+            { val: pin2.v, label: '0%' }
+        ]
+
+        baseLevels.forEach(lvl => {
+            const y = layout.value2y(lvl.val)
+
+            ctx.strokeStyle = color
+            ctx.lineWidth = 1.5
+
+            ctx.beginPath()
+            ctx.moveTo(x1, y)
+            ctx.lineTo(x2, y)
+            ctx.stroke()
+
+            ctx.fillStyle = color
+            ctx.fillText(lvl.label, x2 + 5, y + 4)
+        })
+    }
+}
+
+document.getElementById('idBtnToolFibo')?.addEventListener('click', () => {
+    pressed = true
+})
+
+function disableShift() {
+    pressed = false
+}
+
+disableBtns = ["idBtnToolCursor", "idBtnToolRange"]
+disableBtns.forEach(id => {
+    document.getElementById(id)?.addEventListener('click', disableShift)
+})
+
+mousedown(event) {
+    const layout = $core.layout
+
+    if (state === 'idle' && pressed) {
+        pin1 = {
+            t: $core.cursor.time,
+            i: $core.cursor.ti,
+            v: layout.y2value(event.layerY)
+        }
+        pin2 = { ...pin1 }
+        state = 'drawing'
+
+    } else if (state === 'drawing') {
+        state = 'finished'
+
+    } else if (state === 'finished') {
+        state = 'idle'
+        pin1 = null
+        pin2 = null
+    }
+
+    $events.emitSpec('chart', 'update-layout')
+}
+
+mousemove(event) {
+    if (state === 'drawing') {
+        const layout = $core.layout
+
+        pin2 = {
+            t: $core.cursor.time,
+            i: $core.cursor.ti,
+            v: layout.y2value(event.layerY)
+        }
+    }
+}
+
+legend() => null
