@@ -33,12 +33,12 @@ document.getElementById('idBtnToolBox').addEventListener('click', () => {
     pressed = true
 });
 
-// disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange"]
+// disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange", "idBtnToolFibo"]
 function disableShift() {
     pressed = false;
 }
 
-disableBtns = ["idBtnToolCursor", "idBtnToolRange"]  // "idBtnToolLine"
+disableBtns = ["idBtnToolCursor", "idBtnToolRange", "idBtnToolFibo", "idBtnToolLine"]  // 
 disableBtns.forEach(id => {
     document.getElementById(id)?.addEventListener('click', disableShift);
 });

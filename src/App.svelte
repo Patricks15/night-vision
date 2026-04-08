@@ -160,28 +160,21 @@ onMount(() => {
     }
     chart.update()
 
-    // for (var p = 0; p < 2; p++) {
-    //     chart.data.panes[p].overlays.push({
-    //         name: 'LineTool',
-    //         type: 'LineTool',
-    //         data: [],
-    //         dataExt: {
-    //             lines: [
-    //                     {
-    //                         type: 'segment',
-    //                         p1: [4116, 4.84],
-    //                         p2: [4163, 4.54],
-    //                         uuid: '123'
-    //                     }
-    //                 ]
-    //         }, // Here we place non-timeseries data
-    //         props: {},
-    //         settings: {
-    //             zIndex: 1
-    //         }
-    //     })
-    // }
-    // chart.update()
+    for (var p = 0; p < 2; p++) {
+        chart.data.panes[p].overlays.push({
+            name: 'LineTool',
+            type: 'LineTool',
+            data: [],
+            dataExt: {
+                lines: [{}]
+            }, // Here we place non-timeseries data
+            props: {},
+            settings: {
+                zIndex: 1
+            }
+        })
+    }
+    chart.update()
 
 
 })
@@ -356,8 +349,11 @@ function toggleTheme() {
                 </svg>
             </button>
             <button class="btnTool" id="idBtnToolFibo">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
-                    <path d="M384 80c8.8 0 16 7.2 16 16l0 320c0 8.8-7.2 16-16 16L64 432c-8.8 0-16-7.2-16-16L48 96c0-8.8 7.2-16 16-16l320 0zM64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32z"/>
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none">
+                    <line x1="5" y1="15" x2="95" y2="15" stroke="white" stroke-width="4"/>
+                    <line x1="5" y1="40" x2="95" y2="40" stroke="white" stroke-width="4" stroke-dasharray="6,6"/>
+                    <line x1="5" y1="60" x2="95" y2="60" stroke="white" stroke-width="4" stroke-dasharray="6,6"/>
+                    <line x1="5" y1="85" x2="95" y2="85" stroke="white" stroke-width="4"/>
                 </svg>
             </button>
         </div>

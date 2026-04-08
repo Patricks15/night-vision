@@ -21,15 +21,15 @@ draw(ctx) {
         const y1 = layout.value2y(pin1.v) // 100%
         const y2 = layout.value2y(pin2.v) // 0%
 
-        let color = '#ff9933'
+        let color = '#3355ff';
 
-        // === Base line (100% -> 0%) ===
-        ctx.strokeStyle = color
-        ctx.lineWidth = 2
-        ctx.beginPath()
-        ctx.moveTo(x1, y1)
-        ctx.lineTo(x2, y2)
-        ctx.stroke()
+        // === CROSS Base line (100% -> 0%) ===
+        //ctx.strokeStyle = color
+        //ctx.lineWidth = 2
+        //ctx.beginPath()
+        //ctx.moveTo(x1, y1)
+        //ctx.lineTo(x2, y2)
+        //ctx.stroke()
 
         // === Draw Fibonacci Levels ===
         levels.forEach(level => {
@@ -75,15 +75,16 @@ draw(ctx) {
     }
 }
 
-document.getElementById('idBtnToolFibo')?.addEventListener('click', () => {
+document.getElementById('idBtnToolFibo').addEventListener('click', () => {
     pressed = true
-})
+});
 
 function disableShift() {
     pressed = false
 }
 
-disableBtns = ["idBtnToolCursor", "idBtnToolRange"]
+// disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange", "idBtnToolFibo"]
+disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange", "idBtnToolLine"]
 disableBtns.forEach(id => {
     document.getElementById(id)?.addEventListener('click', disableShift)
 })

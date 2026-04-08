@@ -1,110 +1,88 @@
 // Navy ~ 0.2-lite
-// <ds>Drawing lines [Tap + Hold]</ds>
+// <ds>Draw Trendline [Click + Drag]</ds>
 
-[OVERLAY name=LineTool, ctx=Canvas, verion=1.0.0]
+[OVERLAY name=LineTool, ctx=Canvas, verion=2.0.0, author=GPT4]
 
-let timeId = null
-let mouseX = 0
-let lines = {} // Line objects stored by uuid
+let line = null
+let pressed = false
+let state = 'idle'
 
 init() {
-    // Restore lines from dataExt
-    for (var line of $core.dataExt.lines || []) {
-        lines[line.uuid] = new $lib.TrendLine($core, line)
-        lines[line.uuid].onSelect = lineSelected
-    }
+    line = null
 }
 
 draw(ctx) {
-    for (var line of Object.values(lines)) {
+    if (line) {
         line.draw(ctx)
     }
 }
 
-newLine() {
+document.getElementById('idBtnToolLine')?.addEventListener('click', () => {
+    pressed = true
+})
 
-    if (unfinishedLines() || mouseMoved()) return
-
-    if (!$core.dataExt.lines) {
-        $core.dataExt.lines = []
-    }
-
-    let t = $core.cursor.time
-    let $ = $core.layout.y2value($core.cursor.y)
-    let uuid = $lib.Utils.uuid3()
-    
-    let line = {
-        type: 'segment',
-        p1: [t, $],
-        p2: [t, $],
-        uuid: uuid
-    }
-    $core.dataExt.lines.push(line)
-    lines[uuid] = new $lib.TrendLine($core, line, true)
-    lines[uuid].onSelect = lineSelected
-    lines[uuid].selected = true
-
-    $events.emit('scroll-lock', true)
-    $events.emit('update-layout')
-
+function disableShift() {
+    pressed = false
 }
 
-lineSelected($uuid) {
-    for (var uuid in lines) {
-        lines[uuid].selected = uuid === $uuid
-    }
-    $events.emit('update-layout')
-}
-
-unfinishedLines() {
-    for (var line of Object.values(lines)) {
-        if (line.pins.some(x => x.state !== 'settled')) {
-            return true
-        }
-    }
-    return false
-}
-
-mouseMoved() {
-    let d = Math.abs(mouseX - $core.mouse.x)
-    return d > 5
-}
-
-removeLine(uuid) {
-    delete lines[uuid]
-    $core.dataExt.lines.filter(x => x.uuid !== uuid)
-    $events.emit('update-layout')
-}
-
-propagate(name, data) {
-    // TODO: sort by z-index
-    for (var line of Object.values(lines)) {
-        line[name](data)
-    }
-} 
+disableBtns = ["idBtnToolCursor", "idBtnToolRange"]
+disableBtns.forEach(id => {
+    document.getElementById(id)?.addEventListener('click', disableShift)
+})
 
 mousedown(event) {
-    timeId = setTimeout(newLine, 1000)
-    mouseX = $core.mouse.x
-    lineSelected(null)
-    $events.emit('update-layout')
-    propagate('mousedown', event)
+    const layout = $core.layout
+
+    if (!pressed) return
+
+    if (state === 'idle') {
+
+        console.log("state is idle")
+
+        //const t = $core.cursor.ti  // $core.cursor.time,
+        const i = $core.cursor.ti
+        const v = layout.y2value(event.layerY)
+
+        const data = {
+            type: 'segment',
+            p1: [i, v],
+            p2: [i, v],
+            uuid: 'single-line'
+        }
+
+        line = new $lib.TrendLine($core, data, true)
+        state = 'drawing'
+
+    } else if (state === 'drawing') {
+        state = 'finished'
+
+    } else if (state === 'finished' && event.button === 2) {
+        // and hover over Line
+        state = 'idle'
+        line = null
+    }
+
+    $events.emitSpec('chart', 'update-layout')
+
+    if (line) line.mousedown(event)
 }
 
 mouseup(event) {
-    clearTimeout(timeId)
-    timeId = null
-    propagate('mouseup', event)
+    if (line) line.mouseup(event)
 }
 
 mousemove(event) {
-    propagate('mousemove', event)
-}
+    if (line) {
+        line.mousemove(event)
 
-keydown(event) {
-    if (event.code === 'Backspace') {
-        let s = Object.values(lines).find(x => x.selected)
-        if (s) removeLine(s.data.uuid)
+        if (state === 'drawing') {
+            const layout = $core.layout
+
+            line.data.p2 = [
+                $core.cursor.ti,
+                layout.y2value(event.layerY)
+            ]
+        }
     }
 }
 

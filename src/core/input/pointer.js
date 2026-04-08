@@ -46,11 +46,16 @@ export default class Input {
     }
 
     mouseEvents(cmd) {
-        ['mousemove', 'mouseout', 'mouseup', 'mousedown', 'click']
+        ['mousemove', 'mouseout', 'mouseup', 'mousedown', 'click', 'contextmenu']
         .forEach(e => {
             if (cmd === 'addEventListener') {
-                // Save the handler to remove it later
-                this['_' + e] = this[e].bind(this)
+                // prevent default context menu on right click to use at interactions
+                if (e === 'contextmenu') {
+                    this._contextmenu = event => event.preventDefault()
+                } else {
+                    // Save the handler to remove it later
+                    this['_' + e] = this[e].bind(this)
+                }
             }
             this.canvas[cmd](e, this['_' + e])
         })

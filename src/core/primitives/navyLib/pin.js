@@ -31,7 +31,7 @@ export default class Pin {
     init() {
         if (this.data && this.data[this.name]) {
             let p = this.data[this.name]
-            this.t = p[0]
+            this.t = p[0]  //index 
             this.y$ = p[1]
         }
     }
@@ -63,7 +63,7 @@ export default class Pin {
         ctx.fillStyle = this.COLOR_BACK
         ctx.beginPath()
         ctx.arc(
-            this.x = this.core.layout.time2x(this.t),
+            this.x = this.core.layout.time2x(this.t), // layout.ti2x(pin1.t, pin1.i) // time/index to x coordinate
             this.y = this.core.layout.value2y(this.y$),
             r + 0.5, 0, Math.PI * 2, true)
         ctx.fill()
@@ -77,12 +77,12 @@ export default class Pin {
         this.x = this.core.cursor.x
         this.y = this.core.cursor.y
         let i = this.core.cursor.ti
-        this.t = this.core.cursor.time
+        this.t = i //this.core.cursor.time
         this.y$ = y$
 
         // Save current position in dataExt
-        //this.data[this.name] = [i, this.y$]
-        this.data[this.name] = [this.t, this.y$]
+        this.data[this.name] = [i, this.y$]
+        //this.data[this.name] = [this.t, this.y$]
     }
 
     mousemove(event) {
@@ -107,15 +107,15 @@ export default class Pin {
                 if (this.onSettled) this.onSettled()
                 this.core.events.emit('scroll-lock', false)
                 break
-            case 'settled':
-                if (this.hidden) return
-                if (this.hover()) {
-                    this.state = 'dragging'
-                    this.moved = false
-                    this.core.events.emit('scroll-lock', true)
-                    //TODO: this.core.events.emit('object-selected')
-                }
-                break
+            // case 'settled':
+            //     if (this.hidden) return
+            //     if (this.hover()) {
+            //         this.state = 'dragging'
+            //         this.moved = false
+            //         this.core.events.emit('scroll-lock', true)
+            //         //TODO: this.core.events.emit('object-selected')
+            //     }
+            //     break
         }
         if (this.hover()) {
             event.preventDefault()
