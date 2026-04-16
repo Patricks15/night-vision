@@ -19,7 +19,7 @@ draw(ctx) {
 
          // change fill color based on percentage
         let color = percent() >= 0 ? '#3355ff' : '#ff3333';
-        ctx.fillStyle = color + '33';
+        ctx.fillStyle = color + '55';
         ctx.fillRect(x1, y1, x2 - x1, y2 - y1)
 
         // draw arrows in the middle of rectangle
@@ -136,7 +136,7 @@ function disableShift() {
     shift = false;
 }
 
-disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolLine", "idBtnToolFibo"]
+disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolLine", "idBtnToolFibo", "idBtnToolLine", "idBtnToolTrade"]
 disableBtns.forEach(id => {
     document.getElementById(id)?.addEventListener('click', disableShift);
 });

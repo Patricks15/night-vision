@@ -25,7 +25,7 @@ function disableShift() {
     pressed = false
 }
 
-disableBtns = ["idBtnToolCursor", "idBtnToolRange"]
+disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolFibo", "idBtnToolRange", "idBtnToolTrade"]
 disableBtns.forEach(id => {
     document.getElementById(id)?.addEventListener('click', disableShift)
 })
@@ -36,8 +36,7 @@ mousedown(event) {
     if (!pressed) return
 
     if (state === 'idle') {
-
-        console.log("state is idle")
+        if (event.button !== 0) return // only left click allowed
 
         //const t = $core.cursor.ti  // $core.cursor.time,
         const i = $core.cursor.ti
@@ -58,12 +57,13 @@ mousedown(event) {
 
     } else if (state === 'finished' && event.button === 2) {
         // and hover over Line
-        state = 'idle'
-        line = null
+        if (line.hover) {
+            state = 'idle'
+            line = null
+        }
     }
 
     $events.emitSpec('chart', 'update-layout')
-
     if (line) line.mousedown(event)
 }
 
@@ -77,7 +77,6 @@ mousemove(event) {
 
         if (state === 'drawing') {
             const layout = $core.layout
-
             line.data.p2 = [
                 $core.cursor.ti,
                 layout.y2value(event.layerY)

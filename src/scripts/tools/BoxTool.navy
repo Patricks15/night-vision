@@ -1,33 +1,24 @@
 // Navy ~ 0.2-lite
 // <ds>Draw bounding box tool [Shift+Click]</ds>
 
+import { draw } from "svelte/transition"
+
 [OVERLAY name=BoxTool, ctx=Canvas, verion=1.0.1, author=GPT4]
 
-let pin1 = null
-let pin2 = null
+let box = null
 let pressed = false
 let state = 'idle'
 
+init() {
+    box = null
+}
+
 draw(ctx) {
-    const layout = $core.layout
-
-    if (pin1 && pin2) {
-        const x1 = layout.ti2x(pin1.t, pin1.i) // time/index to x coordinate
-        const x2 = layout.ti2x(pin2.t, pin2.i) // time/index to x coordinate
-        const y1 = layout.value2y(pin1.v) // value to y coordinate
-        const y2 = layout.value2y(pin2.v) // value to y coordinate
-
-         // draw bounding box area
-        let color = '#3355ff';
-        ctx.fillStyle = color + '33';
-        ctx.fillRect(x1, y1, x2 - x1, y2 - y1)
-
-        // draw frame around bounding box
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2; // optional: Dicke des Rahmens
-        ctx.strokeRect(x1, y1, x2 - x1, y2 - y1);
+    if (box) {
+        box.draw(ctx)
     }
 }
+
 
 document.getElementById('idBtnToolBox').addEventListener('click', () => {
     pressed = true
@@ -38,54 +29,65 @@ function disableShift() {
     pressed = false;
 }
 
-disableBtns = ["idBtnToolCursor", "idBtnToolRange", "idBtnToolFibo", "idBtnToolLine"]  // 
+disableBtns = ["idBtnToolCursor", "idBtnToolRange", "idBtnToolFibo", "idBtnToolLine", "idBtnToolTrade"]  // 
 disableBtns.forEach(id => {
     document.getElementById(id)?.addEventListener('click', disableShift);
 });
 
-// keydown(event) {
-//     if (event.key === 'b') {
-//         pressed = true
-//     }
-// }
-
-// keyup(event) {
-//     if (event.key === 'b') {
-//         pressed = false
-//     }
-// }
 
 
 mousedown(event) {
+    
     const layout = $core.layout
+
     if (state === 'idle' && pressed) {
+        if (event.button !== 0) return // only left click allowed
+
         // Create the first pin
-        pin1 = {
-            t: $core.cursor.time,
-            i: $core.cursor.ti,
-            v: layout.y2value(event.layerY)
+        const i = $core.cursor.ti
+        const v = layout.y2value(event.layerY)
+
+        const data = {
+            type: 'segment',
+            p1: [i, v],
+            p2: [i, v],
+            uuid: 'single-line'
         }
-        pin2 = { ...pin1 }
+
+        box = new $lib.Box($core, data, true)
         state = 'drawing'
+
     } else if (state === 'drawing') {
         state = 'finished'
-    } else if (state === 'finished') {
-        state = 'idle'
-        pin1 = null
-        pin2 = null
+
+    } else if (state === 'finished' && event.button === 2) {
+        // and hover over Line
+        if (box.hover) {
+            state = 'idle'
+            box = null
+        }
     }
+
     $events.emitSpec('chart', 'update-layout')
+    if (box) box.mousedown(event)
+}
+
+mouseup(event) {
+    if (box) box.mouseup(event)
 }
 
 mousemove(event) {
+
+    if (box) {
+        box.mousemove(event)
+    }
+
     if (state === 'drawing') {
         const layout = $core.layout
-        // Create the second pin
-        pin2 = {
-            t: $core.cursor.time,
-            i: $core.cursor.ti,
-            v: layout.y2value(event.layerY)
-        }
+        box.data.p2 = [
+            $core.cursor.ti,
+            layout.y2value(event.layerY)
+        ]
     }
 }
 

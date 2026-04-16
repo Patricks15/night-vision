@@ -16,7 +16,6 @@ export default class TrendLine {
         this.currentState = LineDrawState.IDLE;
         this.core = core
         this.data = line
-        this.drawing = false
         this.hover = false
         this.selected = false
         this.onSelect = () => {}
@@ -42,9 +41,8 @@ export default class TrendLine {
         ctx.stroke()
 
         if (this.hover || this.selected) {
-
             for (var pin of this.pins) {
-                pin.draw(ctx)
+                pin.draw(ctx);
             }
         }
     }
@@ -69,11 +67,14 @@ export default class TrendLine {
 
         switch (this.currentState) {
             case LineDrawState.IDLE:
-            case LineDrawState.DRAWING:
-                if (this.collision()) {
+                this.currentState = LineDrawState.DRAWING
+                if (this.collision()) { // WHY?
                     this.onSelect(this.data.uuid)
-                    this.currentState = LineDrawState.DRAWING
                 }
+                break
+            case LineDrawState.DRAWING:
+                this.pins[1].update()  // set final second point
+                this.currentState = LineDrawState.SET
                 break
             case LineDrawState.SET:
                 // LINE EDIT: pick up pin and re-draw line with new pin position
@@ -98,17 +99,10 @@ export default class TrendLine {
 
     mouseup(event) {
         this.propagate('mouseup', event)
-
-        switch (this.currentState) {
-            case LineDrawState.DRAWING:
-
-                this.pins[1].update()  // set final second point
-                this.currentState = LineDrawState.SET
-                break
-        }
     }
         
     mousemove(event) {
+        // set for drawing function
         this.hover = this.collision()
 
         switch (this.currentState) {
@@ -125,9 +119,7 @@ export default class TrendLine {
                 const dtOffset = dt - t1
                 const dvOffset = dv - v1
 
-                this.data.p1 = [t1 + dtOffset, v1 + dvOffset]
                 this.data.p2 = [t2 + dtOffset, v2 + dvOffset]
-
                 break
         }
 
