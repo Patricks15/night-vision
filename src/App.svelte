@@ -176,6 +176,22 @@ onMount(() => {
     }
     chart.update()
 
+    {/* for (var p = 0; p < 1; p++) {
+        chart.data.panes[p].overlays.push({
+            name: 'TradePositionBoxTool',
+            type: 'TradePositionBoxTool',
+            data: [],
+            dataExt: {
+                lines: [{}]
+            }, // Here we place non-timeseries data
+            props: {},
+            settings: {
+                zIndex: 1
+            }
+        })
+    }
+    chart.update() */}
+
 
 })
 
@@ -354,6 +370,43 @@ function toggleTheme() {
                     <line x1="5" y1="40" x2="95" y2="40" stroke="white" stroke-width="4" stroke-dasharray="6,6"/>
                     <line x1="5" y1="60" x2="95" y2="60" stroke="white" stroke-width="4" stroke-dasharray="6,6"/>
                     <line x1="5" y1="85" x2="95" y2="85" stroke="white" stroke-width="4"/>
+                </svg>
+            </button>
+            <button class="btnTool" id="idBtnToolTrade">
+                <svg width="24" height="24" viewBox="0 0 100 100" fill="none">
+
+                    <!-- Schraffur Definitionen -->
+                    <defs>
+                    <pattern id="diagonalHatchUp" patternUnits="userSpaceOnUse" width="6" height="6">
+                        <path d="M0 6L6 0" stroke="white" stroke-width="1" opacity="0.7"/>
+                    </pattern>
+
+                    <pattern id="diagonalHatchDown" patternUnits="userSpaceOnUse" width="6" height="6">
+                        <path d="M0 0L6 6" stroke="white" stroke-width="1" opacity="0.7"/>
+                    </pattern>
+                    </defs>
+
+                    <!-- Reward Zone (größer) -->
+                    <rect x="5" y="5" width="90" height="40" fill="url(#diagonalHatchUp)" />
+
+                    <!-- Risk Zone (kleiner) -->
+                    <rect x="5" y="65" width="90" height="30" fill="url(#diagonalHatchDown)" />
+
+                    <!-- Take Profit -->
+                    <line x1="5" y1="5" x2="95" y2="5" stroke="white" stroke-width="4"/>
+                    <circle cx="5" cy="5" r="3.5" fill="white"/>
+                    <circle cx="95" cy="5" r="3.5" fill="white"/>
+
+                    <!-- Entry -->
+                    <line x1="5" y1="45" x2="95" y2="45" stroke="white" stroke-width="4"/>
+                    <circle cx="5" cy="45" r="3.5" fill="white"/>
+                    <circle cx="95" cy="45" r="3.5" fill="white"/>
+
+                    <!-- Stop Loss -->
+                    <line x1="5" y1="95" x2="95" y2="95" stroke="white" stroke-width="4"/>
+                    <circle cx="5" cy="95" r="3.5" fill="white"/>
+                    <circle cx="95" cy="95" r="3.5" fill="white"/>
+
                 </svg>
             </button>
         </div>

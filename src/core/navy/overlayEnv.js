@@ -23,6 +23,7 @@ import roundRect from '../primitives/navyLib/roundRect.js'
 import drawArrow from '../primitives/navyLib/arrow.js'
 import TrendLine from '../primitives/navyLib/trendLine.js'
 import Box from '../primitives/navyLib/box.js'
+import TradePositionBox from '../primitives/navyLib/tradePositionBox.js'
 import Segment from '../primitives/navyLib/seg.js'
 import Pin from '../primitives/navyLib/pin.js'
 import {
@@ -60,7 +61,7 @@ export default class OverlayEnv {
             candleBody, candleWick, volumeBar,
             fastSma, avgVolume, candleColor, 
             roundRect, rescaleFont, drawArrow, 
-            TrendLine, Box, Segment, Pin,
+            TrendLine, Box, TradePositionBox, Segment, Pin,
             Utils
         }
 

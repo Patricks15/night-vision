@@ -1,0 +1,102 @@
+// Navy ~ 0.2-lite
+// <ds>Draw entry/SL/TP trade position box [Click + Drag]</ds>
+
+[OVERLAY name=TradePositionBoxTool, ctx=Canvas, version=1.0.0, author=GPT4]
+
+let tradeBox = null
+let pressed = false
+let state = 'idle'
+let DEFAULT_RR = 2
+
+init() {
+    tradeBox = null
+    state = 'idle'
+}
+
+draw(ctx) {
+    if (tradeBox) {
+        tradeBox.draw(ctx)
+    }
+}
+
+document.getElementById('idBtnToolTrade').addEventListener('click', () => {
+    pressed = true
+    console.log('Trade Position Box tool activated. ')
+})
+
+function disableTool() {
+    pressed = false
+}
+
+disableBtns = [
+    'idBtnToolCursor',
+    'idBtnToolBox',
+    'idBtnToolRange',
+    'idBtnToolFibo',
+    'idBtnToolLine'
+]
+disableBtns.forEach(id => {
+    document.getElementById(id)?.addEventListener('click', disableTool)
+})
+
+mousedown(event) {
+    if (!pressed) return
+
+    const layout = $core.layout
+
+    if (state === 'idle') {
+        if (event.button !== 0) return
+
+        const i = $core.cursor.ti
+        const entry = layout.y2value(event.layerY)
+
+        const rrSetting = Number($core.src?.settings?.rr)
+        const rr = Number.isFinite(rrSetting) && rrSetting > 0 ? rrSetting : DEFAULT_RR
+
+        const data = {
+            type: 'trade-box',
+            p1: [i, entry],
+            p2: [i, entry],
+            p3: [i, entry],
+            rr,
+            uuid: 'trade-position-box'
+        }
+
+        tradeBox = new $lib.TradePositionBox($core, data, true)
+        state = 'drawing'
+
+    } else if (state === 'drawing' && event.button === 0) {
+        state = 'finished'
+
+    } else if (state === 'finished' && event.button === 2) {
+        if (tradeBox?.hover) {
+            state = 'idle'
+            tradeBox = null
+        }
+    }
+
+    $events.emitSpec('chart', 'update-layout')
+    if (tradeBox) tradeBox.mousedown(event)
+}
+
+mouseup(event) {
+    if (tradeBox) tradeBox.mouseup(event)
+}
+
+mousemove(event) {
+    if (!tradeBox) return
+
+    tradeBox.mousemove(event)
+
+    if (state === 'drawing') {
+        const layout = $core.layout
+        tradeBox.data.p2 = [
+            $core.cursor.ti,
+            layout.y2value(event.layerY)
+        ]
+        tradeBox.data.p3[0] = $core.cursor.ti
+
+    }
+}
+
+legend() => null
