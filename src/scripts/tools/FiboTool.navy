@@ -84,7 +84,7 @@ function disableShift() {
 }
 
 // disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange", "idBtnToolFibo"]
-disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange", "idBtnToolLine"]
+disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolRange", "idBtnToolLine", "idBtnToolTrade"]
 disableBtns.forEach(id => {
     document.getElementById(id)?.addEventListener('click', disableShift)
 })

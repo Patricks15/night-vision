@@ -70,6 +70,13 @@ export default class Pin {
         ctx.stroke()
     }
 
+    force_update(name) {
+        // update points for drawing based on dataExt
+        let p = this.data[name]
+        this.t = p[0]  //index 
+        this.y$ = p[1]
+    }
+
     update() {
 
         let y$ = this.core.layout.y2value(this.core.cursor.y)

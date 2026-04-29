@@ -106,8 +106,9 @@ export default class Box {
 
     mousedown(event) {
         this.propagate('mousedown', event);
-
+        // only handle left mouse button
         if (event.button !== 0) return;
+        
         switch (this.currentState) {
             case BoxDrawState.IDLE:
                 this.currentState = BoxDrawState.DRAWING
@@ -151,7 +152,7 @@ export default class Box {
             case BoxDrawState.DRAWING: {
                 const layout = this.core.layout;
 
-                const dt = this.core.cursor.time;
+                const dt = this.core.cursor.ti;
                 const dv = layout.y2value(this.core.cursor.y);
 
                 this.data.p2 = [dt, dv];

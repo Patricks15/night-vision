@@ -25,17 +25,10 @@ function disableShift() {
     pressed = false
 }
 
-disableBtns = ["idBtnToolCursor", "idBtnToolBox", "idBtnToolFibo", "idBtnToolRange", "idBtnToolTrade"]
-disableBtns.forEach(id => {
-    document.getElementById(id)?.addEventListener('click', disableShift)
-})
-
 mousedown(event) {
     const layout = $core.layout
 
-    if (!pressed) return
-
-    if (state === 'idle') {
+    if (state === 'idle' && pressed) {
         if (event.button !== 0) return // only left click allowed
 
         //const t = $core.cursor.ti  // $core.cursor.time,
@@ -54,6 +47,7 @@ mousedown(event) {
 
     } else if (state === 'drawing') {
         state = 'finished'
+        disableShift()
 
     } else if (state === 'finished' && event.button === 2) {
         // and hover over Line
@@ -74,14 +68,6 @@ mouseup(event) {
 mousemove(event) {
     if (line) {
         line.mousemove(event)
-
-        if (state === 'drawing') {
-            const layout = $core.layout
-            line.data.p2 = [
-                $core.cursor.ti,
-                layout.y2value(event.layerY)
-            ]
-        }
     }
 }
 

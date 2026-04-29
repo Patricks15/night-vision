@@ -28,19 +28,9 @@ function disableTool() {
     pressed = false
 }
 
-disableBtns = [
-    'idBtnToolCursor',
-    'idBtnToolBox',
-    'idBtnToolRange',
-    'idBtnToolFibo',
-    'idBtnToolLine'
-]
-disableBtns.forEach(id => {
-    document.getElementById(id)?.addEventListener('click', disableTool)
-})
 
 mousedown(event) {
-    if (!pressed) return
+    if (!pressed && !tradeBox?.hover) return
 
     const layout = $core.layout
 
@@ -67,6 +57,13 @@ mousedown(event) {
 
     } else if (state === 'drawing' && event.button === 0) {
         state = 'finished'
+        disableTool()
+
+     } else if (state === 'finished' && event.button === 0) {
+        // // allow redrawing
+        // if (tradeBox?.currentState !== "") {
+        //     return
+        // }    
 
     } else if (state === 'finished' && event.button === 2) {
         if (tradeBox?.hover) {
@@ -87,16 +84,6 @@ mousemove(event) {
     if (!tradeBox) return
 
     tradeBox.mousemove(event)
-
-    if (state === 'drawing') {
-        const layout = $core.layout
-        tradeBox.data.p2 = [
-            $core.cursor.ti,
-            layout.y2value(event.layerY)
-        ]
-        tradeBox.data.p3[0] = $core.cursor.ti
-
-    }
 }
 
 legend() => null

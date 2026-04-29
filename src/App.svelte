@@ -176,7 +176,7 @@ onMount(() => {
     }
     chart.update()
 
-    {/* for (var p = 0; p < 1; p++) {
+    for (var p = 0; p < 1; p++) {
         chart.data.panes[p].overlays.push({
             name: 'TradePositionBoxTool',
             type: 'TradePositionBoxTool',
@@ -190,7 +190,7 @@ onMount(() => {
             }
         })
     }
-    chart.update() */}
+    chart.update()
 
 
 })

@@ -72,10 +72,12 @@ export default class TrendLine {
                     this.onSelect(this.data.uuid)
                 }
                 break
+
             case LineDrawState.DRAWING:
                 this.pins[1].update()  // set final second point
                 this.currentState = LineDrawState.SET
                 break
+                
             case LineDrawState.SET:
                 // LINE EDIT: pick up pin and re-draw line with new pin position
                 if (this.hover) {
@@ -110,16 +112,10 @@ export default class TrendLine {
 
                 const layout = this.core.layout
 
-                const dt = this.core.cursor.time
+                const dt = this.core.cursor.ti
                 const dv = layout.y2value(this.core.cursor.y)
 
-                const [t1, v1] = this.data.p1
-                const [t2, v2] = this.data.p2
-
-                const dtOffset = dt - t1
-                const dvOffset = dv - v1
-
-                this.data.p2 = [t2 + dtOffset, v2 + dvOffset]
+                this.data.p2 = [dt, dv]
                 break
         }
 

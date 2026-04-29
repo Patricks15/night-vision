@@ -53,7 +53,7 @@ export default class TradePositionBox {
 
         const [t1, entry] = this.data.p1
         const [t2, stop] = this.data.p2
-        const take = this.takeProfitValue()
+        const [_, take] = this.data.p3
 
         const x1 = layout.time2x(t1)
         const x2 = layout.time2x(t2)
@@ -76,11 +76,46 @@ export default class TradePositionBox {
         this.drawLabel(ctx, right + 6, yStop - 6, 'SL')
         this.drawLabel(ctx, right + 6, yTake - 6, `TP (${this.rr.toFixed(1)}R)`)
 
+        // --- Info box (like RangeTool) ---
+        const tpAbs = take
+        const slAbs = stop
+        const tpPct = ((take - entry) / entry) * 100
+        const slPct = ((stop - entry) / entry) * 100
+        const rr = Math.abs((take - entry) / (entry - stop))
+
+        const text1 = `TP: ${tpAbs.toFixed(2)} (${tpPct >= 0 ? '+' : ''}${tpPct.toFixed(2)}%)`
+        const text2 = `SL: ${slAbs.toFixed(2)} (${slPct >= 0 ? '+' : ''}${slPct.toFixed(2)}%)`
+        const text3 = `RR: ${rr.toFixed(2)}`
+        const font = this.core.lib.rescaleFont(this.core.props.config.FONT, 14)
+        ctx.font = font
+        ctx.textAlign = 'center'
+        ctx.textBaseline = 'middle'
+        const textLines = [text1, text2, text3]
+        const textWidth = Math.max(...textLines.map(line => ctx.measureText(line).width))
+        const padding = 10
+        const boxWidth = textWidth + 2 * padding
+        const boxHeight = 60
+        // Place above entry line if possible, else below
+        const boxX = right - boxWidth / 2
+        const boxY = Math.min(yEntry, yStop, yTake) - boxHeight - 12 > 0
+            ? Math.min(yEntry, yStop, yTake) - boxHeight - 12
+            : Math.max(yEntry, yStop, yTake) + 12
+        // Draw rounded rect (reuse RangeTool style)
+        ctx.fillStyle = '#222c'
+        if (this.core.lib.roundRect) {
+            this.core.lib.roundRect(ctx, boxX, boxY, boxWidth, boxHeight, 6)
+        } else {
+            ctx.fillRect(boxX, boxY, boxWidth, boxHeight)
+        }
+        // Draw text
+        ctx.fillStyle = '#fff'
+        ctx.font = font
+        ctx.fillText(text1, boxX + boxWidth / 2, boxY + boxHeight / 4)
+        ctx.fillText(text2, boxX + boxWidth / 2, boxY + boxHeight / 2)
+        ctx.fillText(text3, boxX + boxWidth / 2, boxY + 3 * boxHeight / 4)
+
         if (this.hover || this.selected) {
-            console.log("-----")
             for (var pin of this.pins) {
-                console.log(pin.name, pin.state)
-                console.log(pin.data[pin.name])
                 pin.draw(ctx)
             }
         }
@@ -115,7 +150,7 @@ export default class TradePositionBox {
 
         const [t1, entry] = this.data.p1
         const [t2, stop] = this.data.p2
-        const take = this.takeProfitValue()
+        const [_, take] = this.data.p3
 
         const x1 = layout.time2x(t1)
         const x2 = layout.time2x(t2)
@@ -192,34 +227,64 @@ export default class TradePositionBox {
             case TradeBoxDrawState.DRAWING: {
                 // set stop loss level by drawing the box
                 const dt = this.core.cursor.ti
-                const dv = layout.y2value(this.core.cursor.y)
-                console.log(dt)
+                let dv = layout.y2value(this.core.cursor.y)
+                // SL must be <= entry
+                const entry = this.data.p1[1]
+                if (dv > entry) dv = entry
                 this.data.p2 = [dt, dv]
-                // set take profit level based on RR
-                const take = this.takeProfitValue()
-                this.data.p3 = [dt, take]
-                console.log(this.data.p2)
-                console.log(this.data.p3)
-                break
 
+                // set take profit level based on RR
+                let take = this.takeProfitValue()
+                // TP must be >= entry
+                if (take < entry) take = entry
+                this.data.p3 = [dt, take]
+                this.pins[2].force_update('p3')
+                break
             }
 
             case TradeBoxDrawState.REDRAW: {
-                const dt = this.core.cursor.time
-                const dv = layout.y2value(this.core.cursor.y)
+                const dt = this.core.cursor.ti
+                let dv = layout.y2value(this.core.cursor.y)
+                const entry = this.data.p1[1]
 
+                // if pin0 is tracking (entry)
                 if (this.pins[0].state === 'tracking') {
-                    const riskDistance = this.data.p2[1] - this.data.p1[1]
-                    const currentEnd = this.data.p2[0]
-
                     this.data.p1 = [dt, dv]
-                    this.data.p2 = [currentEnd, dv + riskDistance]
+                    // enforce SL <= entry
+                    if (this.data.p2[1] > dv) {
+                        this.data.p2[1] = dv
+                        this.pins[1].force_update('p2')
+                    }
+                    // enforce TP >= entry
+                    if (this.data.p3[1] < dv) {
+                        this.data.p3[1] = dv
+                        this.pins[2].force_update('p3')
+                    }
                 }
 
+                // if pin1 is tracking (SL)
                 if (this.pins[1].state === 'tracking') {
+                    // SL must be <= entry
+                    if (dv > entry) dv = entry
                     this.data.p2 = [dt, dv]
+                    // update also take profit index
+                    this.data.p3[0] = dt
+                    // enforce TP >= entry
+                    if (this.data.p3[1] < entry) this.data.p3[1] = entry
+                    this.pins[2].force_update('p3')
                 }
 
+                // if pin2 is tracking (TP)
+                if (this.pins[2].state === 'tracking') {
+                    // TP must be >= entry
+                    if (dv < entry) dv = entry
+                    this.data.p3 = [dt, dv]
+                    // update also take stop loss index
+                    this.data.p2[0] = dt
+                    // enforce SL <= entry
+                    if (this.data.p2[1] > entry) this.data.p2[1] = entry
+                    this.pins[1].force_update('p2')
+                }
                 break
             }
         }
