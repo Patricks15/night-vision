@@ -48,6 +48,30 @@ export default class TradePositionBox {
         return entry + (entry - stop) * this.rr
     }
 
+    isShortDirection() {
+        return this.data.p2[1] > this.data.p1[1]
+    }
+
+    riskDistance() {
+        const entry = this.data.p1[1]
+        const stop = this.data.p2[1]
+        return Math.abs(stop - entry)
+    }
+
+    rewardDistance() {
+        const entry = this.data.p1[1]
+        const take = this.data.p3[1]
+        return Math.abs(take - entry)
+    }
+
+    rewardRiskRatio() {
+        const risk = this.riskDistance()
+        if (!Number.isFinite(risk) || risk <= Number.EPSILON) return 0
+        const reward = this.rewardDistance()
+        if (!Number.isFinite(reward)) return 0
+        return reward / risk
+    }
+
     draw(ctx) {
         const layout = this.core.layout
 
@@ -74,18 +98,19 @@ export default class TradePositionBox {
 
         this.drawLabel(ctx, right + 6, yEntry - 6, 'Entry')
         this.drawLabel(ctx, right + 6, yStop - 6, 'SL')
-        this.drawLabel(ctx, right + 6, yTake - 6, `TP (${this.rr.toFixed(1)}R)`)
+        const rr = this.rewardRiskRatio()
+        this.drawLabel(ctx, right + 6, yTake - 6, `TP (${rr.toFixed(1)}R)`)
 
         // --- Info box (like RangeTool) ---
         const tpAbs = take
         const slAbs = stop
         const tpPct = ((take - entry) / entry) * 100
         const slPct = ((stop - entry) / entry) * 100
-        const rr = Math.abs((take - entry) / (entry - stop))
+        // const rr = Math.abs((take - entry) / (entry - stop)) // This line is no longer needed
 
         const text1 = `TP: ${tpAbs.toFixed(2)} (${tpPct >= 0 ? '+' : ''}${tpPct.toFixed(2)}%)`
         const text2 = `SL: ${slAbs.toFixed(2)} (${slPct >= 0 ? '+' : ''}${slPct.toFixed(2)}%)`
-        const text3 = `RR: ${rr.toFixed(2)}`
+        const text3 = `RR: ${this.rewardRiskRatio().toFixed(2)}`
         const font = this.core.lib.rescaleFont(this.core.props.config.FONT, 14)
         ctx.font = font
         ctx.textAlign = 'center'
@@ -227,16 +252,11 @@ export default class TradePositionBox {
             case TradeBoxDrawState.DRAWING: {
                 // set stop loss level by drawing the box
                 const dt = this.core.cursor.ti
-                let dv = layout.y2value(this.core.cursor.y)
-                // SL must be <= entry
-                const entry = this.data.p1[1]
-                if (dv > entry) dv = entry
+                const dv = layout.y2value(this.core.cursor.y)
                 this.data.p2 = [dt, dv]
 
                 // set take profit level based on RR
-                let take = this.takeProfitValue()
-                // TP must be >= entry
-                if (take < entry) take = entry
+                const take = this.takeProfitValue()
                 this.data.p3 = [dt, take]
                 this.pins[2].force_update('p3')
                 break
@@ -250,13 +270,23 @@ export default class TradePositionBox {
                 // if pin0 is tracking (entry)
                 if (this.pins[0].state === 'tracking') {
                     this.data.p1 = [dt, dv]
-                    // enforce SL <= entry
-                    if (this.data.p2[1] > dv) {
+
+                    const isShort = this.isShortDirection()
+
+                    // keep SL on loss side of entry
+                    if (!isShort && this.data.p2[1] > dv) {
+                        this.data.p2[1] = dv
+                        this.pins[1].force_update('p2')
+                    } else if (isShort && this.data.p2[1] < dv) {
                         this.data.p2[1] = dv
                         this.pins[1].force_update('p2')
                     }
-                    // enforce TP >= entry
-                    if (this.data.p3[1] < dv) {
+
+                    // keep TP on reward side of entry
+                    if (!isShort && this.data.p3[1] < dv) {
+                        this.data.p3[1] = dv
+                        this.pins[2].force_update('p3')
+                    } else if (isShort && this.data.p3[1] > dv) {
                         this.data.p3[1] = dv
                         this.pins[2].force_update('p3')
                     }
@@ -264,25 +294,29 @@ export default class TradePositionBox {
 
                 // if pin1 is tracking (SL)
                 if (this.pins[1].state === 'tracking') {
-                    // SL must be <= entry
-                    if (dv > entry) dv = entry
                     this.data.p2 = [dt, dv]
-                    // update also take profit index
+
+                    // keep TP level unchanged; only align its time anchor
                     this.data.p3[0] = dt
-                    // enforce TP >= entry
-                    if (this.data.p3[1] < entry) this.data.p3[1] = entry
                     this.pins[2].force_update('p3')
                 }
 
                 // if pin2 is tracking (TP)
                 if (this.pins[2].state === 'tracking') {
-                    // TP must be >= entry
-                    if (dv < entry) dv = entry
+                    const isShort = this.isShortDirection()
+
+                    // TP must stay on reward side according to direction
+                    if (!isShort && dv < entry) dv = entry
+                    if (isShort && dv > entry) dv = entry
+
                     this.data.p3 = [dt, dv]
-                    // update also take stop loss index
+
+                    // update stop-loss index to keep rectangle width in sync
                     this.data.p2[0] = dt
-                    // enforce SL <= entry
-                    if (this.data.p2[1] > entry) this.data.p2[1] = entry
+
+                    // keep SL on loss side according to direction
+                    if (!isShort && this.data.p2[1] > entry) this.data.p2[1] = entry
+                    if (isShort && this.data.p2[1] < entry) this.data.p2[1] = entry
                     this.pins[1].force_update('p2')
                 }
                 break
