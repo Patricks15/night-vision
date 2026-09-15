@@ -37,7 +37,6 @@ export default class TradePositionBox {
         ]
 
         if (nw) {
-            this.pins[1].state = 'tracking'
             this.pins[2].state = 'tracking'
         }
     }
@@ -46,6 +45,11 @@ export default class TradePositionBox {
         const entry = this.data.p1[1]
         const stop = this.data.p2[1]
         return entry + (entry - stop) * this.rr
+    }
+
+    stopLossValueFromTake(take) {
+        const entry = this.data.p1[1]
+        return entry - ((take - entry) / this.rr)
     }
 
     isShortDirection() {
@@ -218,7 +222,9 @@ export default class TradePositionBox {
                 break
 
             case TradeBoxDrawState.DRAWING:
-                this.pins[1].update()
+                this.pins[2].update()
+                this.data.p2 = [this.data.p3[0], this.stopLossValueFromTake(this.data.p3[1])]
+                this.pins[1].force_update('p2')
                 this.currentState = TradeBoxDrawState.SET
                 break
 
@@ -250,15 +256,15 @@ export default class TradePositionBox {
 
         switch (this.currentState) {
             case TradeBoxDrawState.DRAWING: {
-                // set stop loss level by drawing the box
+                // set take profit level by drawing the box
                 const dt = this.core.cursor.ti
                 const dv = layout.y2value(this.core.cursor.y)
-                this.data.p2 = [dt, dv]
+                this.data.p3 = [dt, dv]
 
-                // set take profit level based on RR
-                const take = this.takeProfitValue()
-                this.data.p3 = [dt, take]
-                this.pins[2].force_update('p3')
+                // set stop loss level based on RR
+                const stop = this.stopLossValueFromTake(dv)
+                this.data.p2 = [dt, stop]
+                this.pins[1].force_update('p2')
                 break
             }
 
