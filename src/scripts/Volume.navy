@@ -18,8 +18,8 @@ prop('colorAvgVol', { type: 'color', def: '#17e2bb99'})
 // Draw call
 draw(ctx) {
 
-    let height = $core.id === 0 ? 0.8 : $props.barsHeight
-    let cnv = $lib.layoutCnv($core, false, true, 1, 2, height)
+    let volumeScale = $core.id === 0 ? null : $props.barsHeight
+    let cnv = $lib.layoutCnv($core, false, true, 1, 2, volumeScale)
     let bars = cnv.upVolbars.length ? cnv.upVolbars : cnv.dwVolbars
     if (!bars.length) return
 

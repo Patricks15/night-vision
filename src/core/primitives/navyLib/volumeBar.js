@@ -7,9 +7,9 @@ const HPX = Const.HPX
 
 export default function volumeBar(ctx, data, layout) {
 
-    let y0 = layout.height
+    let y0 = data.y0 ?? layout.height
     let w = Math.max(1, data.x2 - data.x1 + HPX)
-    let h = data.h
+    let h = data.h ?? (y0 - data.y1)
     let x05 = (data.x2 + data.x1) * 0.5
 
     ctx.lineWidth = w

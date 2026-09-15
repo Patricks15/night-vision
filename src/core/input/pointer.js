@@ -79,7 +79,9 @@ export default class Input {
         mc.on('panstart', event => {
             if (this.cursor.scroll_lock) return
             if (this.cursor.mode === 'aim') {
-                return this.emitCursorCoord(event)
+                this.events.emit('cursor-changed', {
+                    mode: 'explore'
+                })
             }
             let scaleId = this.layout.scaleIndex
             let tfrm = this.meta.getYtransform(this.gridId, scaleId)

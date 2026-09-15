@@ -29,6 +29,8 @@ export default function layoutCnv(
     // The volume bar height is determined as a percentage of
     // the chart's height (VOLSCALE)
 
+    const scaleToLayout = $v && vScale === null
+
     if ($v) {
         var volScale = vScale ?? config.VOLSCALE
         var maxv = maxVolume(core.dataSubset, vIndex)
@@ -84,7 +86,14 @@ export default function layoutCnv(
         if ($v) {
             x1 = prev || Math.floor(mid - pxStep * 0.5)
             x2 = Math.floor(mid + pxStep * 0.5) + HPX
-            let volbar = {
+            let volbar = scaleToLayout ? {
+                x1: x1,
+                x2: x2,
+                y0: layout.height,
+                y1: layout.value2y(p[vIndex]),
+                green: green,
+                src: p
+            } : {
                 x1: x1,
                 x2: x2,
                 h: p[vIndex] * vs,
@@ -105,7 +114,8 @@ export default function layoutCnv(
         upBodies, upWicks, dwBodies, dwWicks,
         upVolbars, dwVolbars,
         maxVolume: maxv,
-        volScale: vs
+        volScale: vs,
+        volScaleMode: scaleToLayout
     }
 
 }
